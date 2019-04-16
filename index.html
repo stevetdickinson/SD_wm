@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>GI Projects in Philadelphia</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Green Infrastrucutre Projects in Philadelphia, PA</h1>
+        <h2>Private and Public Retrofits and New Features</h2>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by Stephen Dickinson</p>
+        <p>Data provided by the City of Philadelphia via OpenDataPhilly.org</p>
+    </footer>
+
+    <script src="Public_Projects.js"></script>
+    <script src= "Private_New.js"></script>
+    <script src= "Private_Retrofit.js"></script>
+    <script>
+
+       var map = L.map('map', {
+          center: [39.992583,-75.125222],
+          zoom: 11,
+      });
+      
+      var tiles = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+      });  
+      
+      tiles.addTo(map);
+   
+var public = L.geoJson(publicProjects, {    
+     pointToLayer: function(feature,latlng) {
+         return L.circleMarker(latlng, {
+             color: 'red',
+             weight: 1,
+             fillColor: 'red',
+             fillOpacity: .6,
+             radius:3
+            
+         });
+     },
+     
+   
+ onEachFeature : function(feature,layer) {
+     
+   layer.on('mouseover',function(){
+       layer.bindPopup("<b>Name: </b>" + feature.properties.PROJECTNAME
+        +"<br><b>Project Status: </b>"+feature.properties.STATUS.toLocaleString()).openPopup()
+   })
+        ;  
+}
+}).addTo(map);
+
+var privateNewProj = L.geoJson(privateNew, {    
+     pointToLayer: function(feature,latlng) {
+         return L.circleMarker(latlng, {
+             color: 'green',
+             weight: 1,
+             fillColor: 'green',
+             fillOpacity: .6,
+             radius:3
+            
+         });
+     },
+     
+   
+ onEachFeature : function(feature,layer) {
+     
+   layer.on('mouseover',function(){
+       layer.bindPopup("<b>Name: </b>" + feature.properties.NAME
+        +"<br><b>Project Status: </b>"+feature.properties.OVERALLSTATUSCATEGORY.toLocaleString()).openPopup()
+   })
+        ;  
+}
+}).addTo(map);
+        
+var privateRetrofitProjects = L.geoJson(privateRetrofit, {    
+     pointToLayer: function(feature,latlng) {
+         return L.circleMarker(latlng, {
+             color: 'blue',
+             weight: 1,
+             fillColor: 'blue',
+             fillOpacity: .6,
+             radius:3
+            
+         });
+     },
+     
+   
+ onEachFeature : function(feature,layer) {
+     
+   layer.on('mouseover',function(){
+       layer.bindPopup("<b>Name: </b>" + feature.properties.NAME
+        +"<br><b>Project Status: </b>"+feature.properties.OVERALLSTATUSCATEGORY.toLocaleString()).openPopup()
+   })
+        ;
+     
+     }
+}).addTo(map);
+
+        
+        
+var sourcelayers = {
+    "<b style ='color: red'> Public Projects</b>": public,
+    "<b style ='color:green'>New Private Projects</b>": privateNewProj,
+    "<b style='color:blue'>Private Retrofit Projects</b>": privateRetrofitProjects
+}
+L.control.layers(null, sourcelayers, {collapsed:true}).addTo(map);        
+
+L.control.scale({metric:false}).addTo(map);
+
+
+              
+    </script>
+    
+</body>
+
+</html>
